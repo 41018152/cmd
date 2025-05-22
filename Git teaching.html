@@ -1,182 +1,327 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Git CMD 操作完整教學</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: #fff;
-      min-height: 100vh;
-      padding: 30px 20px;
-      display: flex;
-      justify-content: center;
-    }
-    .container {
-      background: rgba(255,255,255,0.1);
-      padding: 30px 40px;
-      border-radius: 12px;
-      max-width: 700px;
-      width: 100%;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-      backdrop-filter: blur(8px);
-      overflow-x: auto;
-    }
-    h1 {
-      font-size: 2.2rem;
-      margin-bottom: 20px;
-      font-weight: 700;
-      text-align: center;
-    }
-    h2 {
-      margin-top: 32px;
-      font-size: 1.5rem;
-      border-bottom: 2px solid #a8a8ff;
-      padding-bottom: 6px;
-    }
-    p {
-      font-size: 1rem;
-      line-height: 1.6;
-      margin-top: 12px;
-    }
-    pre {
-      background: rgba(255,255,255,0.15);
-      padding: 15px 20px;
-      border-radius: 8px;
-      font-size: 1rem;
-      line-height: 1.5;
-      overflow-x: auto;
-      margin-top: 8px;
-      user-select: all;
-    }
-    code {
-      font-family: Consolas, Monaco, 'Courier New', monospace;
-      color: #f0f0f0;
-    }
-    a {
-      color: #c8c8ff;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    /* 響應式 */
-    @media (max-width: 600px) {
-      .container {
-        padding: 20px 15px;
-      }
-      h1 {
-        font-size: 1.7rem;
-      }
-      h2 {
-        font-size: 1.3rem;
-      }
-      pre {
-        font-size: 0.9rem;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Git & GitHub CLI 完整教學</title>
+<style>
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #f9faff;
+    color: #2c3e50;
+    margin: 20px;
+    line-height: 1.6;
+    transition: background-color 0.3s ease;
+  }
+  h1, h2 {
+    color: #34495e;
+    position: relative;
+  }
+  h2::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 60px;
+    height: 4px;
+    background: #3498db;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  h2:hover::after {
+    width: 100px;
+  }
+  .step {
+    background: white;
+    margin: 1.5em 0;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgb(0 0 0 / 0.1);
+    transform: translateY(0);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .step:hover {
+    box-shadow: 0 12px 30px rgb(0 0 0 / 0.15);
+    transform: translateY(-5px);
+  }
+  .code-block {
+    background: #eaeef7;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 12px;
+    font-family: monospace;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: inset 0 0 5px rgb(0 0 0 / 0.05);
+    transition: background-color 0.3s ease;
+  }
+  .code-block:hover {
+    background-color: #d2dbf2;
+  }
+  code {
+    white-space: nowrap;
+    user-select: text;
+    font-size: 1rem;
+    color: #2c3e50;
+  }
+  button.copy {
+    border: none;
+    background-color: #3498db;
+    color: white;
+    padding: 7px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.15s;
+    flex-shrink: 0;
+    user-select: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  button.copy:hover:not(:disabled) {
+    background-color: #2c80d9;
+    transform: scale(1.05);
+  }
+  button.copy:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+  .input-inline {
+    border: none;
+    background: transparent;
+    border-bottom: 1.5px solid #3498db;
+    font-size: 1rem;
+    padding: 2px 4px;
+    margin: 0 4px;
+    width: 180px;
+    font-family: monospace;
+    color: #2c3e50;
+  }
+  .input-inline:focus {
+    outline: none;
+    background-color: #f0f7ff;
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>Git CMD 操作完整教學</h1>
+  <h1>Git & GitHub CLI 完整教學</h1>
+  <p>以下步驟包含安裝、設定、建立專案、操作儲存庫到推送等完整流程，並可輸入自訂參數，點擊旁邊按鈕快速複製指令。</p>
 
+  <div class="step" id="step1">
     <h2>1. 安裝 Git</h2>
-    <p>
-      Git 是版本控制工具，必須先安裝才能使用。<br/>
-      請前往官方網站 <a href="https://git-scm.com/downloads" target="_blank" rel="noopener">https://git-scm.com/downloads</a>，根據你的作業系統下載並安裝最新版本。<br/>
-      安裝完成後，可以打開「命令提示字元（CMD）」或「PowerShell」，輸入 <code>git --version</code> 來檢查是否安裝成功。
-    </p>
-    <pre><code>git --version</code></pre>
-    <p>若顯示版本號，表示安裝成功。</p>
-
-    <h2>2. 設定 Git 使用者名稱與電子郵件（只需設定一次）</h2>
-    <p>
-      Git 需要知道你的使用者名稱和電子郵件，這些資訊會顯示在每次提交（commit）中。<br/>
-      請使用以下指令設定全域（Global）名稱和信箱，這表示未來所有專案都會使用這組資訊。
-    </p>
-    <pre><code>git config --global user.name "你的GitHub使用者名稱"
-git config --global user.email "你的電子郵件信箱"</code></pre>
-    <p>請將雙引號內的內容換成你自己的資料。這只需執行一次，除非想更改。</p>
-
-    <h2>3. 初始化 Git 儲存庫</h2>
-    <p>
-      在你的專案資料夾裡（例如桌面上的某個資料夾），按住 <code>Shift</code> 鍵並滑鼠右鍵點擊空白處，選「在此處開啟命令視窗」或直接在命令列切換到該資料夾。<br/>
-      執行以下指令，讓該資料夾變成 Git 儲存庫：
-    </p>
-    <pre><code>git init</code></pre>
-    <p>此時該資料夾會有一個隱藏的 <code>.git</code> 資料夾，Git 開始追蹤這個資料夾內的變更。</p>
-
-    <h2>4. 新增所有檔案並提交第一次版本</h2>
-    <p>
-      將目前資料夾所有檔案加入暫存區，準備提交。<br/>
-      建議每次新增或修改後都先執行 <code>git add .</code> 把所有變更加入暫存區。<br/>
-      然後用 <code>git commit</code> 建立一個提交版本，會帶上一個描述訊息，方便未來回顧。
-    </p>
-    <pre><code>git add .
-git commit -m "首次提交"
-git branch -M main</code></pre>
-    <p>
-      <code>git branch -M main</code> 是把主要分支改名為 <code>main</code>，這是 GitHub 預設的主要分支名稱。
-    </p>
-
-    <h2>5. 建立遠端儲存庫並連結（Remote Repository）</h2>
-    <p>
-      到 GitHub 網站 <a href="https://github.com" target="_blank" rel="noopener">https://github.com</a> 登入，點選右上角的「＋」→「New repository」新建一個空的儲存庫（Repository）。<br/>
-      取一個名字，例如 <code>my-project</code>，不用勾選初始化 README 或其他檔案，建立後會得到一個網址。<br/>
-      範例網址：
-    </p>
-    <pre><code>https://github.com/你的帳號/my-project.git</code></pre>
-    <p>
-      回到本機專案，執行以下指令連結遠端儲存庫（URL 請換成你的）：
-    </p>
-    <pre><code>git remote add origin https://github.com/你的帳號/my-project.git</code></pre>
-    <p>如果提示 <code>error: remote origin already exists.</code>，代表這個專案已經有設定遠端，可以用下面指令移除後再新增：</p>
-    <pre><code>git remote remove origin
-git remote add origin https://github.com/你的帳號/my-project.git</code></pre>
-
-    <h2>6. 將本地提交推送到遠端儲存庫</h2>
-    <p>
-      執行以下指令，將本地的主要分支推送到 GitHub 的遠端儲存庫，首次推送需要加上 <code>-u</code> 參數設定追蹤：
-    </p>
-    <pre><code>git push -u origin main</code></pre>
-    <p>之後再推送時只需執行 <code>git push</code> 即可。</p>
-
-    <h2>7. 後續更新檔案提交與推送</h2>
-    <p>當你在專案資料夾內新增、修改、刪除檔案時，可以用以下流程提交並推送最新變更：</p>
-    <pre><code>git add .
-git commit -m "更新說明"
-git push</code></pre>
-    <p>
-      - <code>git add .</code>：把所有變更加入暫存區<br/>
-      - <code>git commit -m "訊息"</code>：提交版本並加上描述訊息<br/>
-      - <code>git push</code>：推送更新到遠端儲存庫
-    </p>
-
-    <h2>8. 查看目前遠端儲存庫設定</h2>
-    <p>若不確定目前連結的是哪個遠端儲存庫，可以用以下指令查看 URL：</p>
-    <pre><code>git remote -v</code></pre>
-    <p>會顯示遠端名稱（通常是 origin）和對應的網址。</p>
-
-    <h2>9. 刪除已設定的遠端儲存庫（若需要重新設定）</h2>
-    <p>如果想重新設定遠端儲存庫，可以先移除舊設定：</p>
-    <pre><code>git remote remove origin</code></pre>
-    <p>之後再用第 5 步驟的指令新增新的遠端儲存庫。</p>
-
-    <h2>10. 其他常用小提示</h2>
-    <ul>
-      <li>每次執行提交前，建議先用 <code>git status</code> 查看目前有哪些檔案變更。</li>
-      <li>如果只想新增特定檔案，可以改用 <code>git add 檔名</code>。</li>
-      <li>在命令列複製貼上指令，建議貼上後先確認再按 Enter，避免誤操作。</li>
-      <li>要離開命令列視窗，輸入 <code>exit</code> 或直接關閉視窗即可。</li>
-    </ul>
-
+    <p>至 <a href="https://git-scm.com/downloads" target="_blank" rel="noopener noreferrer">Git 官方下載頁面</a>，下載並安裝適合您作業系統的 Git。</p>
   </div>
+
+  <div class="step" id="step2">
+    <h2>2. 安裝 GitHub CLI（gh）</h2>
+    <p>至 <a href="https://cli.github.com/" target="_blank" rel="noopener noreferrer">GitHub CLI 官方網站</a> 下載並安裝 gh 工具。</p>
+  </div>
+
+  <div class="step" id="step3">
+    <h2>3. 設定 Git 使用者名稱與電子郵件（必須，僅設定一次）</h2>
+    <div class="code-block">
+      <code>git config --global user.name "<input class='input-inline' id='inputName' placeholder='你的使用者名稱' />"</code>
+      <button class="copy" onclick="copyInlineCommand('inputName', 'git config --global user.name')">複製</button>
+    </div>
+    <div class="code-block">
+      <code>git config --global user.email "<input class='input-inline' id='inputEmail' placeholder='你的電子郵件' />"</code>
+      <button class="copy" onclick="copyInlineCommand('inputEmail', 'git config --global user.email')">複製</button>
+    </div>
+  </div>
+
+  <div class="step" id="step4">
+    <h2>4. 在本機建立 Git 專案</h2>
+    <div class="input-group">
+      <input type="text" id="folderName" placeholder="輸入資料夾名稱" />
+      <button class="generate" onclick="generateFolderCmds()">產生指令</button>
+    </div>
+    <div class="code-block">
+      <code id="mkdirCmd">mkdir 資料夾名稱</code>
+      <button class="copy" onclick="copyCode('mkdirCmd', this)">複製</button>
+    </div>
+    <div class="code-block">
+      <code id="cdCmd">cd 資料夾名稱</code>
+      <button class="copy" onclick="copyCode('cdCmd', this)">複製</button>
+    </div>
+    <div class="code-block">
+      <code>git init</code>
+      <button class="copy" onclick="copyStaticCode(this)">複製</button>
+    </div>
+  </div>
+
+  <div class="step" id="step5">
+    <h2>5. 登入 GitHub CLI 與建立儲存庫</h2>
+    <p>請先安裝 GitHub CLI (gh) 工具。若系統無法識別 <code>gh</code> 指令，可依作業系統執行以下安裝指令：</p>
+
+    <details>
+      <summary>安裝 GitHub CLI</summary>
+      <div style="margin-top:8px; font-size:0.95rem;">
+        <strong>macOS (Homebrew):</strong>
+        <pre style="background:#f3f6ff; padding:8px; border-radius:6px; overflow-x:auto;">
+brew install gh
+        </pre>
+
+        <strong>Ubuntu / Debian (APT):</strong>
+        <pre style="background:#f3f6ff; padding:8px; border-radius:6px; overflow-x:auto;">
+sudo apt update
+sudo apt install gh
+        </pre>
+
+        <strong>Windows (Scoop):</strong>
+        <pre style="background:#f3f6ff; padding:8px; border-radius:6px; overflow-x:auto;">
+scoop install gh
+        </pre>
+
+        <strong>Windows (Winget):</strong>
+        <pre style="background:#f3f6ff; padding:8px; border-radius:6px; overflow-x:auto;">
+winget install --id GitHub.cli
+        </pre>
+
+        <strong>更多安裝方式請參考：<a href="https://cli.github.com/manual/installation" target="_blank" rel="noopener noreferrer">官方安裝說明</a></strong>
+      </div>
+    </details>
+
+    <div class="code-block">
+      <code>gh auth login</code>
+      <button class="copy" onclick="copyStaticCode(this)">複製</button>
+    </div>
+
+    <div class="input-group">
+      <input type="text" id="repoName" placeholder="輸入儲存庫名稱" />
+      <button class="generate" onclick="generateCmd('repoName', 'cmdRepoCreate', 'gh repo create {val} --public --source=. --remote=origin --push')">產生指令</button>
+    </div>
+    <div class="code-block">
+      <code id="cmdRepoCreate">gh repo create 儲存庫名稱 --public --source=. --remote=origin --push</code>
+      <button class="copy" onclick="copyCode('cmdRepoCreate', this)">複製</button>
+    </div>
+  </div>
+
+  <div class="step" id="step6">
+    <h2>6. 查看目前 Git 狀態</h2>
+    <div class="code-block">
+      <code>git status</code>
+      <button class="copy" onclick="copyStaticCode(this)">複製</button>
+    </div>
+  </div>
+
+  <div class="step" id="step7">
+    <h2>7. 將檔案加入版本控制並提交</h2>
+    <div class="user-input">
+      <input type="text" id="commitMessage" placeholder="輸入 commit 訊息，預設為 更新內容" />
+      <button class="user-button" onclick="generateCommitCommand()">產生 commit 指令</button>
+    </div>
+
+    <div class="code-block">
+      <code id="cmd-add">git add .</code>
+      <button class="copy" onclick="copyCode('cmd-add', this)">複製</button>
+    </div>
+
+    <div class="code-block">
+      <code id="cmd-commit">git commit -m "更新內容"</code>
+      <button class="copy" onclick="copyCode('cmd-commit', this)">複製</button>
+    </div>
+
+    <div class="code-block">
+      <code id="cmd-push">git push</code>
+      <button class="copy" onclick="copyCode('cmd-push', this)">複製</button>
+    </div>
+  </div>
+
+  <div class="step" id="step8">
+    <h2>8. 推送本機分支到遠端（GitHub）</h2>
+    <p>假設你使用的分支名稱是 <code>main</code>，可用以下指令推送：</p>
+    <div class="code-block">
+      <code>git push -u origin main</code>
+      <button class="copy" onclick="copyStaticCode(this)">複製</button>
+    </div>
+    <p>若分支名稱不同，請將 <code>main</code> 改成你的分支名稱。</p>
+  </div>
+
+  <div class="step" id="step9">
+    <h2>9. 其他常用 Git 指令</h2>
+    <ul>
+      <li><code>git log</code>：查看提交歷史</li>
+      <li><code>git diff</code>：查看檔案變更差異</li>
+      <li><code>git checkout 分支名稱</code>：切換分支</li>
+      <li><code>git branch</code>：查看所有分支</li>
+      <li><code>git merge 分支名稱</code>：合併分支</li>
+      <li><code>git reset --hard HEAD~1</code>：回到前一次提交狀態（小心使用）</li>
+    </ul>
+    <div class="code-block">
+      <code>git log --oneline --graph --all</code>
+      <button class="copy" onclick="copyStaticCode(this)">複製</button>
+    </div>
+  </div>
+
+  <div class="step" id="step10">
+    <h2>10. 其他常用 GitHub CLI 指令</h2>
+    <ul>
+      <li><code>gh repo clone 使用者名稱/儲存庫名稱</code>：快速複製儲存庫</li>
+      <li><code>gh issue list</code>：列出儲存庫的問題（Issues）</li>
+      <li><code>gh pr list</code>：列出 Pull Requests</li>
+      <li><code>gh pr create</code>：建立新的 Pull Request</li>
+      <li><code>gh gist create 檔案</code>：建立 Gist（程式碼片段）</li>
+      <li><code>gh repo fork</code>：分叉（Fork）遠端儲存庫</li>
+    </ul>
+  </div>
+<script>
+   // 產生可帶參數的指令，將 {val} 替換成輸入框值
+  function generateCmd(inputId, codeId, template) {
+    const val = document.getElementById(inputId).value.trim();
+    const cmdElem = document.getElementById(codeId);
+    if (!val) return alert('請先輸入文字');
+    const escapedVal = val.replace(/"/g, '\\"');
+    const cmd = template.replace('{val}', escapedVal);
+    cmdElem.textContent = cmd;
+  }
+
+  // 複製指定 code 內容，並顯示按鈕狀態變化
+  function copyCode(codeId, btn) {
+    const codeElem = document.getElementById(codeId);
+    if (!codeElem) return;
+    navigator.clipboard.writeText(codeElem.textContent).then(() => {
+      btn.textContent = "已複製";
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = "複製";
+        btn.disabled = false;
+      }, 2000);
+    });
+  }
+
+    // step4: 產生建立資料夾及切換資料夾指令
+  function generateFolderCmds() {
+    const val = document.getElementById('folderName').value.trim();
+    if (!val) return alert('請輸入資料夾名稱');
+    document.getElementById('mkdirCmd').textContent = `mkdir ${val}`;
+    document.getElementById('cdCmd').textContent = `cd ${val}`;
+  }
+
+  // step7: 產生 commit 指令，根據輸入訊息，預設為 "更新內容"
+  function generateCommitCommand() {
+    const input = document.getElementById('commitMessage');
+    const commitCmd = document.getElementById('cmd-commit');
+    let msg = input.value.trim();
+    if (!msg) msg = "更新內容";
+    msg = msg.replace(/"/g, '\\"');
+    commitCmd.textContent = `git commit -m "${msg}"`;
+  }
+  function copyInlineCommand(inputId, prefix) {
+    const input = document.getElementById(inputId);
+    if (!input || !input.value.trim()) return alert('請輸入內容');
+    const val = input.value.trim().replace(/"/g, '\"');
+    const fullCmd = `${prefix} \"${val}\"`;
+    navigator.clipboard.writeText(fullCmd).then(() => {
+      const btn = event.target;
+      btn.textContent = "已複製";
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = "複製";
+        btn.disabled = false;
+      }, 2000);
+    });
+    
+  }
+</script>
 </body>
 </html>
