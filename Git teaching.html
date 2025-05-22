@@ -101,6 +101,40 @@
     outline: none;
     background-color: #f0f7ff;
   }
+
+    .input-group {
+    margin-bottom: 10px;
+  }
+
+  .input-group label {
+    display: inline-block;
+    width: 120px;
+  }
+
+  .input-group input {
+    padding: 4px 8px;
+    width: 200px;
+  }
+
+  .code-block {
+    background-color: #f4f4f4;
+    padding: 10px;
+    margin-top: 10px;
+    font-family: monospace;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .copy {
+    margin-left: 10px;
+    cursor: pointer;
+  }
+
+  button {
+    margin-top: 5px;
+    padding: 5px 10px;
+  }
 </style>
 </head>
 <body>
@@ -197,10 +231,36 @@ winget install --id GitHub.cli
   </div>
 
   <div class="step" id="step6">
-    <h2>6. 查看目前 Git 狀態</h2>
-    <div class="code-block">
-      <code>git status</code>
-      <button class="copy" onclick="copyStaticCode(this)">複製</button>
+    <h2>6. 設定 Git 遠端儲存庫 URL</h2>
+
+    <p>請在指令中直接輸入你的 GitHub 帳號與儲存庫名稱：</p>
+
+    <p>此指令用來更改現有遠端 origin 的 URL 地址，通常用在遠端倉庫網址變更時。</p>
+    <div class="code-block" style="margin-top: 10px;">
+      <code>
+        git remote set-url origin https://github.com/
+        <input class="input-inline" id="inputUserSetUrl" placeholder="帳號" />
+        /
+        <input class="input-inline" id="inputRepoSetUrl" placeholder="儲存庫名" />.git
+      </code>
+      <button class="copy" onclick="copyRemoteCommand('set-url', event)">複製</button>
+    </div><br>
+
+    <p>此指令用來移除本地 Git 設定中的遠端 origin。</p>
+    <div class="code-block" style="margin-top: 10px;">
+      <code>git remote remove origin</code>
+      <button class="copy" onclick="copyStaticCode(event)">複製</button>
+    </div><br>
+
+    <p>此指令用來新增遠端 origin，將本地倉庫與遠端儲存庫連結起來。</p>
+    <div class="code-block" style="margin-top: 10px;">
+      <code>
+        git remote add origin https://github.com/
+        <input class="input-inline" id="inputUserAdd" placeholder="帳號" />
+        /
+        <input class="input-inline" id="inputRepoAdd" placeholder="儲存庫名" />.git
+      </code>
+      <button class="copy" onclick="copyRemoteCommand('add', event)">複製</button>
     </div>
   </div>
 
@@ -213,17 +273,17 @@ winget install --id GitHub.cli
 
     <div class="code-block">
       <code id="cmd-add">git add .</code>
-      <button class="copy" onclick="copyCode('cmd-add', this)">複製</button>
+      <button class="copy" onclick="copyCodeById('cmd-add', this)">複製</button>
     </div>
 
     <div class="code-block">
       <code id="cmd-commit">git commit -m "更新內容"</code>
-      <button class="copy" onclick="copyCode('cmd-commit', this)">複製</button>
+      <button class="copy" onclick="copyCodeById('cmd-commit', this)">複製</button>
     </div>
 
     <div class="code-block">
       <code id="cmd-push">git push</code>
-      <button class="copy" onclick="copyCode('cmd-push', this)">複製</button>
+      <button class="copy" onclick="copyCodeById('cmd-push', this)">複製</button>
     </div>
   </div>
 
@@ -232,7 +292,7 @@ winget install --id GitHub.cli
     <p>假設你使用的分支名稱是 <code>main</code>，可用以下指令推送：</p>
     <div class="code-block">
       <code>git push -u origin main</code>
-      <button class="copy" onclick="copyStaticCode(this)">複製</button>
+      <button class="copy" onclick="copyStaticCode(event)">複製</button>
     </div>
     <p>若分支名稱不同，請將 <code>main</code> 改成你的分支名稱。</p>
   </div>
@@ -265,7 +325,7 @@ winget install --id GitHub.cli
     </ul>
   </div>
 <script>
-   // 產生可帶參數的指令，將 {val} 替換成輸入框值
+  // 產生可帶參數的指令，將 {val} 替換成輸入框值
   function generateCmd(inputId, codeId, template) {
     const val = document.getElementById(inputId).value.trim();
     const cmdElem = document.getElementById(codeId);
@@ -275,21 +335,21 @@ winget install --id GitHub.cli
     cmdElem.textContent = cmd;
   }
 
-  // 複製指定 code 內容，並顯示按鈕狀態變化
-  function copyCode(codeId, btn) {
-    const codeElem = document.getElementById(codeId);
-    if (!codeElem) return;
-    navigator.clipboard.writeText(codeElem.textContent).then(() => {
-      btn.textContent = "已複製";
-      btn.disabled = true;
-      setTimeout(() => {
-        btn.textContent = "複製";
-        btn.disabled = false;
-      }, 2000);
+  // 複製指定 code 內容並顯示按鈕狀態
+    function copyCodeById(codeId, btn) {
+      const codeElem = document.getElementById(codeId);
+      if (!codeElem) return;
+      navigator.clipboard.writeText(codeElem.textContent.trim()).then(() => {
+        btn.textContent = "已複製";
+        btn.disabled = true;
+        setTimeout(() => {
+          btn.textContent = "複製";
+          btn.disabled = false;
+        }, 2000);
     });
-  }
+    }
 
-    // step4: 產生建立資料夾及切換資料夾指令
+  // 產生建立資料夾及切換資料夾指令 (step4)
   function generateFolderCmds() {
     const val = document.getElementById('folderName').value.trim();
     if (!val) return alert('請輸入資料夾名稱');
@@ -297,7 +357,7 @@ winget install --id GitHub.cli
     document.getElementById('cdCmd').textContent = `cd ${val}`;
   }
 
-  // step7: 產生 commit 指令，根據輸入訊息，預設為 "更新內容"
+  // 產生 commit 指令，根據輸入訊息，預設為 "更新內容" (step7)
   function generateCommitCommand() {
     const input = document.getElementById('commitMessage');
     const commitCmd = document.getElementById('cmd-commit');
@@ -306,11 +366,13 @@ winget install --id GitHub.cli
     msg = msg.replace(/"/g, '\\"');
     commitCmd.textContent = `git commit -m "${msg}"`;
   }
-  function copyInlineCommand(inputId, prefix) {
+
+  // 複製帶輸入框參數的指令，需帶 event 物件才能取得按鈕
+  function copyInlineCommand(event, inputId, prefix) {
     const input = document.getElementById(inputId);
     if (!input || !input.value.trim()) return alert('請輸入內容');
-    const val = input.value.trim().replace(/"/g, '\"');
-    const fullCmd = `${prefix} \"${val}\"`;
+    const val = input.value.trim().replace(/"/g, '\\"');
+    const fullCmd = `${prefix} "${val}"`;
     navigator.clipboard.writeText(fullCmd).then(() => {
       const btn = event.target;
       btn.textContent = "已複製";
@@ -320,8 +382,78 @@ winget install --id GitHub.cli
         btn.disabled = false;
       }, 2000);
     });
-    
   }
+
+  // 根據帳號和repo名稱產生遠端 Git 指令
+    function updateRemoteCommands() {
+      const user = document.getElementById('githubUser').value.trim();
+      const repo = document.getElementById('repoName').value.trim();
+
+      if (!user || !repo) {
+        alert('請輸入帳號與儲存庫名稱');
+        return;
+      }
+
+      const url = `https://github.com/${user}/${repo}.git`;
+
+      document.getElementById('cmdSetUrl').textContent = `git remote set-url origin ${url}`;
+      document.getElementById('cmdAdd').textContent = `git remote add origin ${url}`;
+    }
+
+    // 複製遠端指令（set-url 或 add）
+    function copyRemoteCommand(type, event) {
+      let user, repo, cmd;
+      if (type === 'set-url') {
+        user = document.getElementById('inputUserSetUrl').value.trim();
+        repo = document.getElementById('inputRepoSetUrl').value.trim();
+        if (!user || !repo) {
+          alert('請輸入帳號與儲存庫名稱');
+          return;
+        }
+        cmd = `git remote set-url origin https://github.com/${user}/${repo}.git`;
+      } else if (type === 'add') {
+        user = document.getElementById('inputUserAdd').value.trim();
+        repo = document.getElementById('inputRepoAdd').value.trim();
+        if (!user || !repo) {
+          alert('請輸入帳號與儲存庫名稱');
+          return;
+        }
+        cmd = `git remote add origin https://github.com/${user}/${repo}.git`;
+      }
+      navigator.clipboard.writeText(cmd).then(() => {
+        const btn = event.target;
+        btn.textContent = "已複製";
+        btn.disabled = true;
+        setTimeout(() => {
+          btn.textContent = "複製";
+          btn.disabled = false;
+        }, 2000);
+      });
+    }
+
+      // 複製靜態指令
+    function copyStaticCode(event) {
+      const btn = event.target;
+      const codeElem = btn.previousElementSibling;
+      if (!codeElem) return;
+      navigator.clipboard.writeText(codeElem.textContent).then(() => {
+        btn.textContent = "已複製";
+        btn.disabled = true;
+        setTimeout(() => {
+          btn.textContent = "複製";
+          btn.disabled = false;
+        }, 2000);
+      });
+    }
+
+    function generateCommitCommand() {
+      const msgInput = document.getElementById('commitMessage');
+      const commitCmd = document.getElementById('cmd-commit');
+      let msg = msgInput.value.trim();
+      if (!msg) msg = "更新內容";
+      commitCmd.textContent = `git commit -m "${msg}"`;
+    }
 </script>
+
 </body>
 </html>
