@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>用 CMD 操作 Git - 完整教學</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      background: #f0f2f5;
+      color: #333;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    h1, h2 {
+      color: #2c3e50;
+    }
+    pre {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 14px;
+      line-height: 1.4;
+      margin: 10px 0 20px 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    code {
+      font-family: monospace;
+      background: #eee;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    p {
+      margin-top: 0;
+    }
+    ul {
+      margin-top: 0;
+    }
+    .note {
+      background: #fff3cd;
+      border-left: 5px solid #ffeeba;
+      padding: 12px;
+      margin: 20px 0;
+      color: #856404;
+    }
+    a {
+      color: #3498db;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* 響應式 */
+    @media (max-width: 768px) {
+      body {
+        max-width: 100%;
+        margin: 20px 10px;
+        padding: 0 10px;
+      }
+      h1 {
+        font-size: 1.8rem;
+      }
+      h2 {
+        font-size: 1.3rem;
+      }
+      pre {
+        font-size: 13px;
+        padding: 12px;
+      }
+    }
+    @media (max-width: 480px) {
+      body {
+        margin: 15px 8px;
+        padding: 0 8px;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      h2 {
+        font-size: 1.1rem;
+      }
+      pre {
+        font-size: 12px;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>用 CMD 操作 Git - 完整教學</h1>
+
+  <p>以下是使用 Windows CMD（命令提示字元）操作 Git 的完整步驟，包含如何建立本地儲存庫、設定全域使用者名稱與信箱、連結 GitHub 遠端儲存庫、推送檔案，以及如何查看遠端網址等。</p>
+
+  <h2>1. 進入你的專案資料夾</h2>
+  <p>例如你的專案在 <code>C:\Users\你的帳號\my-project</code>，執行：</p>
+  <pre>cd C:\Users\你的帳號\my-project</pre>
+
+  <h2>2. 初始化 Git 儲存庫</h2>
+  <p>讓該資料夾成為 Git 本地儲存庫：</p>
+  <pre>git init</pre>
+  <p>你會看到類似 <code>Initialized empty Git repository</code> 的訊息。</p>
+
+  <h2>3. 設定全域使用者名稱與信箱（只需執行一次）</h2>
+  <p>Git 需要知道你的身份，請用你的 GitHub 帳號和信箱替換下面指令中的內容：</p>
+  <pre>
+git config --global user.name "你的GitHub使用者名稱"
+git config --global user.email "你的信箱@example.com"
+  </pre>
+
+  <h2>4. 新增檔案到 Git 暫存區（Stage）</h2>
+  <p>將所有檔案新增至暫存區：</p>
+  <pre>git add .</pre>
+
+  <h2>5. 提交檔案（Commit）</h2>
+  <p>寫一個描述本次提交的訊息：</p>
+  <pre>git commit -m "第一次提交：新增專案初始檔案"</pre>
+
+  <h2>6. 連結 GitHub 遠端儲存庫</h2>
+  <p>假設你已經在 GitHub 上建立一個空的遠端儲存庫，URL 類似：</p>
+  <pre>https://github.com/你的帳號/my-project.git</pre>
+  <p>使用以下指令把遠端儲存庫加入本地專案：</p>
+  <pre>git remote add origin https://github.com/你的帳號/my-project.git</pre>
+
+  <h2>7. 推送檔案到 GitHub</h2>
+  <p>將本地的檔案推送到遠端的 <code>main</code> 分支（或 master，依你的遠端設定）：</p>
+  <pre>git push -u origin main</pre>
+  <p>第一次推送時加上 <code>-u</code> 參數設定預設追蹤分支，之後只要用 <code>git push</code> 即可。</p>
+
+  <div class="note">
+    <strong>注意：</strong> 如果你的遠端分支不是 <code>main</code>，請改成相應的分支名稱（例如 master）。
+  </div>
+
+  <h2>8. 查看已設定的遠端網址</h2>
+  <p>你可以用下面指令查看遠端儲存庫網址：</p>
+  <pre>git remote -v</pre>
+  <p>執行後會看到類似：</p>
+  <pre>
+origin  https://github.com/你的帳號/my-project.git (fetch)
+origin  https://github.com/你的帳號/my-project.git (push)
+  </pre>
+
+  <h2>9. 其他常用指令</h2>
+  <ul>
+    <li><code>git status</code> ：查看目前檔案狀態</li>
+    <li><code>git pull</code> ：從遠端拉取最新更動</li>
+    <li><code>git log</code> ：查看提交歷史</li>
+  </ul>
+
+  <h2>附註：如何建立 GitHub 遠端儲存庫</h2>
+  <p>請至 <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub 官方網站</a>，登入你的帳號後，點選右上角的 <strong>＋</strong> &gt; <strong>New repository</strong>，填寫儲存庫名稱並建立空的儲存庫即可。</p>
+
+  <h2>小結</h2>
+  <p>透過以上步驟，你可以用 CMD 完整操作 Git，將你的專案從本機上傳並管理於 GitHub。推送成功後，也可以在 GitHub 上看到你的檔案和歷史記錄。</p>
+
+</body>
+</html>
