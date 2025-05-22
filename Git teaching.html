@@ -171,15 +171,15 @@
     </div>
     <div class="code-block">
       <code id="mkdirCmd">mkdir 資料夾名稱</code>
-      <button class="copy" onclick="copyCode('mkdirCmd', this)">複製</button>
+      <button class="copy" onclick="copyCodeStep45('mkdirCmd', this)">複製</button>
     </div>
     <div class="code-block">
       <code id="cdCmd">cd 資料夾名稱</code>
-      <button class="copy" onclick="copyCode('cdCmd', this)">複製</button>
+      <button class="copy" onclick="copyCodeStep45('cdCmd', this)">複製</button>
     </div>
     <div class="code-block">
       <code>git init</code>
-      <button class="copy" onclick="copyStaticCode(this)">複製</button>
+      <button class="copy" onclick="copyStaticCodeStep45(this)">複製</button>
     </div>
   </div>
 
@@ -217,7 +217,7 @@ winget install --id GitHub.cli
 
     <div class="code-block">
       <code>gh auth login</code>
-      <button class="copy" onclick="copyStaticCode(this)">複製</button>
+      <button class="copy" onclick="copyStaticCodeStep55(this)">複製</button>
     </div>
 
     <div class="input-group">
@@ -226,7 +226,7 @@ winget install --id GitHub.cli
     </div>
     <div class="code-block">
       <code id="cmdRepoCreate">gh repo create 儲存庫名稱 --public --source=. --remote=origin --push</code>
-      <button class="copy" onclick="copyCode('cmdRepoCreate', this)">複製</button>
+      <button class="copy" onclick="copyCodeStep55('cmdRepoCreate', this)">複製</button>
     </div>
   </div>
 
@@ -289,6 +289,7 @@ winget install --id GitHub.cli
 
   <div class="step" id="step8">
     <h2>8. 推送本機分支到遠端（GitHub）</h2>
+    <h4>第一次推送請使用此指令，第二次以上要更新推送再使用git push</h4>
     <p>假設你使用的分支名稱是 <code>main</code>，可用以下指令推送：</p>
     <div class="code-block">
       <code>git push -u origin main</code>
@@ -453,6 +454,230 @@ winget install --id GitHub.cli
       if (!msg) msg = "更新內容";
       commitCmd.textContent = `git commit -m "${msg}"`;
     }
+
+    function copyCode(id, btn) {
+      const code = document.getElementById(id);
+      if (!code) return;
+
+      // 建立一個暫時的 textarea 元素
+      const textarea = document.createElement('textarea');
+      textarea.value = code.textContent || code.innerText;
+      document.body.appendChild(textarea);
+      textarea.select();
+
+      try {
+        document.execCommand('copy');
+        btn.textContent = '已複製';
+        setTimeout(() => {
+          btn.textContent = '複製';
+        }, 1500);
+      } catch (err) {
+        alert('複製失敗，請手動複製');
+      }
+
+      document.body.removeChild(textarea);
+    }
+
+    function copyStaticCode(btn) {
+      // 找到同一個 code 元素，通常是上一個兄弟元素
+      const code = btn.previousElementSibling;
+      if (!code) return;
+
+      const textarea = document.createElement('textarea');
+      textarea.value = code.textContent || code.innerText;
+      document.body.appendChild(textarea);
+      textarea.select();
+
+      try {
+        document.execCommand('copy');
+        btn.textContent = '已複製';
+        setTimeout(() => {
+          btn.textContent = '複製';
+        }, 1500);
+      } catch (err) {
+        alert('複製失敗，請手動複製');
+      }
+
+      document.body.removeChild(textarea);
+    }
+  // 複製指定 id 的 code 內容
+    function copyCode(id, btn) {
+      const codeElem = document.getElementById(id);
+      if (!codeElem) {
+        alert('找不到要複製的內容');
+        return;
+      }
+      copyTextToClipboard(codeElem.textContent.trim(), btn);
+    }
+
+  // 複製按鈕旁的 <code> 內容（不帶 id 的純靜態）
+    function copyStaticCode(btn) {
+      const codeElem = btn.previousElementSibling;
+      if (!codeElem) {
+        alert('找不到要複製的內容');
+        return;
+      }
+      copyTextToClipboard(codeElem.textContent.trim(), btn);
+    }
+
+  // 實際複製文字到剪貼簿的共用函式
+    function copyTextToClipboard(text, btn) {
+    // 使用 Clipboard API（現代瀏覽器優先）
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+          showCopySuccess(btn);
+        }).catch(() => {
+          fallbackCopy(text, btn);
+        });
+      } else {
+      // 傳統 fallback
+        fallbackCopy(text, btn);
+      }
+    }
+
+  // 傳統複製 fallback 實作
+    function fallbackCopy(text, btn) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+    // 避免頁面跳動，移出螢幕外
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      try {
+        document.execCommand('copy');
+        showCopySuccess(btn);
+      } catch (err) {
+        alert('複製失敗，請手動複製');
+      }
+      document.body.removeChild(textarea);
+    }
+
+  // 複製成功的按鈕提示
+    function showCopySuccess(btn) {
+      const originalText = btn.textContent;
+      btn.textContent = '已複製';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }, 1500);
+    }
+
+
+      function copyCodeStep45(id, btn) {
+        const codeElem = document.getElementById(id);
+        if (!codeElem) {
+          alert('找不到要複製的內容');
+          return;
+        }
+        copyTextToClipboardStep45(codeElem.textContent.trim(), btn);
+      }
+
+      function copyStaticCodeStep45(btn) {
+        const codeElem = btn.previousElementSibling;
+        if (!codeElem) {
+          alert('找不到要複製的內容');
+          return;
+        }
+        copyTextToClipboardStep45(codeElem.textContent.trim(), btn);
+      }
+
+      function copyTextToClipboardStep45(text, btn) {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(() => {
+            showCopySuccessStep45(btn);
+          }).catch(() => {
+            fallbackCopyStep45(text, btn);
+          });
+        } else {
+          fallbackCopyStep45(text, btn);
+        }
+      }
+
+      function fallbackCopyStep45(text, btn) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand('copy');
+          showCopySuccessStep45(btn);
+        } catch (err) {
+          alert('複製失敗，請手動複製');
+        }
+        document.body.removeChild(textarea);
+      }
+
+      function showCopySuccessStep45(btn) {
+        const originalText = btn.textContent;
+        btn.textContent = '已複製';
+        btn.disabled = true;
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }, 1500);
+      }
+
+
+
+      function copyCodeStep55(id, btn) {
+        const codeElem = document.getElementById(id);
+        if (!codeElem) {
+          alert('找不到要複製的內容');
+          return;
+        }
+        copyTextToClipboardStep55(codeElem.textContent.trim(), btn);
+      }
+
+      function copyStaticCodeStep55(btn) {
+        const codeElem = btn.previousElementSibling;
+        if (!codeElem) {
+          alert('找不到要複製的內容');
+          return;
+        }
+        copyTextToClipboardStep55(codeElem.textContent.trim(), btn);
+      }
+
+      function copyTextToClipboardStep55(text, btn) {
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard.writeText(text).then(() => {
+            showCopySuccessStep55(btn);
+          }).catch(() => {
+            fallbackCopyStep55(text, btn);
+          });
+        } else {
+          fallbackCopyStep55(text, btn);
+        }
+      }
+
+      function fallbackCopyStep55(text, btn) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand('copy');
+          showCopySuccessStep55(btn);
+        } catch (err) {
+          alert('複製失敗，請手動複製');
+        }
+        document.body.removeChild(textarea);
+      }
+
+      function showCopySuccessStep55(btn) {
+        const originalText = btn.textContent;
+        btn.textContent = '已複製';
+        btn.disabled = true;
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }, 1500);
+      }
 </script>
 
 </body>
